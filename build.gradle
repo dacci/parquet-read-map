@@ -1,0 +1,52 @@
+plugins {
+  id 'java'
+  id 'application'
+  id 'com.diffplug.spotless' version '6.2.0'
+}
+
+sourceCompatibility = '17'
+
+configurations {
+  compileOnly {
+    extendsFrom annotationProcessor
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.apache.parquet:parquet-hadoop:1.12.2'
+  implementation 'org.apache.hadoop:hadoop-client-api:3.3.1'
+  runtimeOnly('org.apache.spark:spark-core_2.13:3.2.0') {
+    exclude group: 'log4j', module: 'log4j'
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'commons-logging', module: 'commons-logging'
+  }
+
+  compileOnly 'org.projectlombok:lombok:1.18.22'
+  annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+  implementation 'org.slf4j:slf4j-api:1.7.33'
+  implementation 'org.slf4j:log4j-over-slf4j:1.7.33'
+  implementation 'org.slf4j:jcl-over-slf4j:1.7.33'
+  runtimeOnly('ch.qos.logback:logback-classic:1.2.10') {
+    exclude group: 'com.sun.mail', module: 'javax.mail'
+  }
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+}
+
+spotless {
+  java {
+    googleJavaFormat()
+    importOrder 'java', 'javax', 'org', 'com', ''
+  }
+}
+
+application {
+  mainClass = 'org.dacci.Main'
+}
